@@ -1,0 +1,34 @@
+# Git ignore for doums-backend
+
+# Exclude unwanted project parts
+domus_mobile/
+admin-panel/
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+*,cover
+.hypothesis/
+.pytest_cache/
+
+# OS
+.DS_Store
+
+# Data/Logs
+uploads/
+*.log
+
+# Misc
+*.docx
