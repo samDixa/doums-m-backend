@@ -23,9 +23,25 @@ logger = logging.getLogger(__name__)
 @app.on_event("startup")
 async def startup_event():
     logger.info("Starting up Domus API...")
-    # This automatically creates all tables defined in models if they don't exist
-    Base.metadata.create_all(bind=engine)
-    logger.info("Database tables verified/created.")
+    
+    # Retry logic for database connection
+    import time
+    max_retries = 5
+    retry_interval = 5
+    
+    for i in range(max_retries):
+        try:
+            # This automatically creates all tables defined in models if they don't exist
+            Base.metadata.create_all(bind=engine)
+            logger.info("Database tables verified/created.")
+            break
+        except Exception as e:
+            if i < max_retries - 1:
+                logger.warning(f"Database connection failed (attempt {i+1}/{max_retries}). Retrying in {retry_interval}s... Error: {e}")
+                time.sleep(retry_interval)
+            else:
+                logger.error(f"Database connection failed after {max_retries} attempts. Starting app without DB verification.")
+    
     os.makedirs("uploads/profile_pics", exist_ok=True)
     logger.info("Uploads directory verified.")
 

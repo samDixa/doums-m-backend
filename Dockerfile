@@ -15,8 +15,8 @@ COPY . .
 # Make wait script executable (just in case)
 RUN chmod +x scripts/wait-for-it.sh
 
-# Expose port
+# Expose port (Railway will override this with its own PORT env var)
 EXPOSE 8000
 
-# Start server with wait script
-CMD ["./scripts/wait-for-it.sh", "${POSTGRES_SERVER:-db}", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Start server with dynamic port and shell expansion
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
