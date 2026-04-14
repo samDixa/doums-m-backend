@@ -25,7 +25,8 @@ from sqlalchemy import func
 from typing import List
 from app.models.home import (
     HomeBanner, Category, SubCategory, 
-    SubCategoryLecture, SubCategoryNote, SubCategoryTest
+    SubCategoryLecture, SubCategoryNote, SubCategoryTest,
+    HomeFeaturedBatch
 )
 from app.schemas.home import (
     BannerCreate, BannerResponse,
