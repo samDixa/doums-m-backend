@@ -6,15 +6,14 @@ from app.api.routers import api_router
 from app.core.database import Base, engine
 from app.models import test, user, other, course, home, notification # Registering all models with SQLAlchemy Base
 
+# Ensure uploads directory exists before mounting
+os.makedirs("uploads/profile_pics", exist_ok=True)
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
-
-# Mount static files
-import os
-import logging
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -42,8 +41,7 @@ async def startup_event():
             else:
                 logger.error(f"Database connection failed after {max_retries} attempts. Starting app without DB verification.")
     
-    os.makedirs("uploads/profile_pics", exist_ok=True)
-    logger.info("Uploads directory verified.")
+    logger.info("Startup complete.")
 
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 

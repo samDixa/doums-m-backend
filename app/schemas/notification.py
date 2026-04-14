@@ -18,7 +18,7 @@ class UserNotificationResponse(BaseModel):
     is_read: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class NotificationReadRequest(BaseModel):
     notification_ids: List[int]
@@ -31,4 +31,4 @@ class ArticleResponse(BaseModel):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True

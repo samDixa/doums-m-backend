@@ -18,7 +18,7 @@ class CategoryResponse(CategoryBase):
     created_at: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class SubCategoryBase(BaseModel):
     title: str
@@ -38,7 +38,7 @@ class SubCategoryResponse(SubCategoryBase):
     created_at: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class SubCategoryLectureBase(BaseModel):
     title: str
@@ -54,7 +54,7 @@ class SubCategoryLectureResponse(SubCategoryLectureBase):
     created_at: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class SubCategoryNoteBase(BaseModel):
     title: str
@@ -70,7 +70,7 @@ class SubCategoryNoteResponse(SubCategoryNoteBase):
     created_at: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class SubCategoryTestBase(BaseModel):
     test_id: int
@@ -85,7 +85,7 @@ class SubCategoryTestResponse(SubCategoryTestBase):
     created_at: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class SubCategoryDetailResponse(SubCategoryResponse):
     lectures: List[SubCategoryLectureResponse] = []
@@ -108,7 +108,7 @@ class HomeCategoryResponse(HomeCategoryBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class BannerBase(BaseModel):
     image_url: str
@@ -124,7 +124,7 @@ class BannerResponse(BannerBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class HomeFeaturedBatchBase(BaseModel):
     course_id: int
@@ -142,4 +142,4 @@ class HomeFeaturedBatchResponse(HomeFeaturedBatchBase):
     course: Optional[CourseListResponse] = None
     
     class Config:
-        orm_mode = True
+        from_attributes = True

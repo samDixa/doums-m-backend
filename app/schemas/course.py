@@ -18,7 +18,7 @@ class CourseModuleBase(BaseModel):
     lessons: List[CourseLessonBase] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class CourseBase(BaseModel):
     id: int
@@ -40,7 +40,7 @@ class CourseBase(BaseModel):
 
 class CourseListResponse(CourseBase):
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TestBase(BaseModel):
     id: int
@@ -50,14 +50,14 @@ class TestBase(BaseModel):
     is_active: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class CourseDetailResponse(CourseBase):
     modules: List[CourseModuleBase] = []
     tests: List[TestBase] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class LessonProgressUpdate(BaseModel):
     last_position: Optional[int] = None

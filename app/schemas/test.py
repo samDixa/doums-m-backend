@@ -19,7 +19,7 @@ class QuestionDetailResponse(QuestionBase):
     option_stats: Dict[str, float] = {"A": 0, "B": 0, "C": 0, "D": 0}
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TestBase(BaseModel):
     id: int
@@ -33,14 +33,14 @@ class TestBase(BaseModel):
 
 class TestListResponse(TestBase):
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TestDetailResponse(TestBase):
     is_featured: bool
     total_attempts: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class AnswerSubmit(BaseModel):
     question_id: int
@@ -61,7 +61,7 @@ class TestAttemptResponse(BaseModel):
     accuracy: float
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TestGroupBase(BaseModel):
     id: int
@@ -71,14 +71,14 @@ class TestGroupBase(BaseModel):
     is_active: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TestGroupDetailResponse(TestGroupBase):
     children: List['TestGroupDetailResponse'] = []
     tests: List[TestListResponse] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Update forward refs
 TestGroupDetailResponse.update_forward_refs()
