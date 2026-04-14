@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api.routers import api_router
+from app.initial_data import init_db
 from app.core.database import Base, engine
 from app.models import test, user, other, course, home, notification # Registering all models with SQLAlchemy Base
 
@@ -36,6 +37,10 @@ async def startup_event():
             # This automatically creates all tables defined in models if they don't exist
             Base.metadata.create_all(bind=engine)
             logger.info("Database tables verified/created.")
+            
+            # Bootstrap admin user
+            init_db()
+            logger.info("Admin bootstrap check complete.")
             break
         except Exception as e:
             if i < max_retries - 1:
