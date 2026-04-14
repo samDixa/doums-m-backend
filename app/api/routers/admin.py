@@ -568,6 +568,7 @@ def create_banner(
         raise HTTPException(status_code=400, detail="Maximum limit of 3 banners reached. Please delete an existing banner first.")
     
     # Save the file
+    os.makedirs("uploads/banners", exist_ok=True)
     file_extension = os.path.splitext(file.filename)[1]
     file_name = f"{uuid.uuid4()}{file_extension}"
     file_path = os.path.join("uploads/banners", file_name)
