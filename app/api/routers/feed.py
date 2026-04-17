@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Body
 from sqlalchemy.orm import Session
 from datetime import datetime
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from app.api.dependencies import get_current_user, get_optional_user
 from app.core.database import get_db
 from app.models.user import User
@@ -139,3 +139,18 @@ def get_clinical_case_of_the_week(
         raise HTTPException(status_code=404, detail="No clinical case available")
         
     return article
+
+@router.get("/articles", response_model=List[ArticleResponse])
+def get_articles(
+    db: Session = Depends(get_db),
+    skip: int = 0,
+    limit: int = 20
+):
+    """
+    Get all published articles for the feed.
+    """
+    articles = db.query(Article).filter(
+        Article.is_published == True
+    ).order_by(Article.created_at.desc()).offset(skip).limit(limit).all()
+    
+    return articles

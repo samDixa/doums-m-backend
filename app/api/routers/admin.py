@@ -535,6 +535,19 @@ def create_article(
     db.refresh(db_obj)
     return db_obj
 
+@router.delete("/article/{article_id}")
+def delete_article(
+    article_id: int,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin_user)
+):
+    db_obj = db.query(Article).filter(Article.id == article_id).first()
+    if not db_obj:
+        raise HTTPException(status_code=404, detail="Article not found")
+    db.delete(db_obj)
+    db.commit()
+    return {"message": "Article deleted"}
+
 @router.post("/notification")
 def create_notification(
     item: NotificationCreate,
@@ -546,6 +559,19 @@ def create_notification(
     db.commit()
     db.refresh(db_obj)
     return db_obj
+
+@router.delete("/notification/{notification_id}")
+def delete_notification(
+    notification_id: int,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin_user)
+):
+    db_obj = db.query(Notification).filter(Notification.id == notification_id).first()
+    if not db_obj:
+        raise HTTPException(status_code=404, detail="Notification not found")
+    db.delete(db_obj)
+    db.commit()
+    return {"message": "Notification deleted"}
 
 # Banner Management
 @router.get("/banners", response_model=List[BannerResponse])
