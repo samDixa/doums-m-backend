@@ -6,8 +6,8 @@ from app.core.database import Base
 class TestGroup(Base):
     __tablename__ = "test_groups"
 
-    id = Column(BigInteger, primary_key=True, index=True)
-    parent_id = Column(BigInteger, ForeignKey("test_groups.id"))
+    id = Column(Integer, primary_key=True, index=True)
+    parent_id = Column(Integer, ForeignKey("test_groups.id"))
     title = Column(String, nullable=False)
     sequence = Column(Integer)
     is_active = Column(Boolean, default=True, nullable=False)
@@ -18,9 +18,9 @@ class TestGroup(Base):
 class Test(Base):
     __tablename__ = "tests"
 
-    id = Column(BigInteger, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
     title = Column(String, unique=True, nullable=False)
-    test_group_id = Column(BigInteger, ForeignKey("test_groups.id", ondelete="SET NULL"))
+    test_group_id = Column(Integer, ForeignKey("test_groups.id", ondelete="SET NULL"))
     available_for_web = Column(Boolean, default=False)
     available_for_android = Column(Boolean, default=False)
     available_for_ios = Column(Boolean, default=False)

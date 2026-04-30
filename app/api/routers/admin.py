@@ -8,12 +8,12 @@ from app.core import security
 from app.models.user import User, UserCredential
 
 from app.models.course import Course, CourseModule, CourseLesson
-from app.models.test import Test, Question
+from app.models.test import Test, Question, TestGroup
 from app.models.other import Article
 from app.models.notification import Notification
 from app.schemas.admin import (
     CourseCreate, CourseUpdate, ModuleCreate, ModuleUpdate, LessonCreate, LessonUpdate,
-    QuestionCreate, QuestionUpdate, QuestionAdminResponse, TestCreate, TestUpdate, ArticleCreate, NotificationCreate,
+    QuestionCreate, QuestionUpdate, QuestionAdminResponse, TestCreate, TestUpdate, TestGroupCreate, TestGroupUpdate, ArticleCreate, NotificationCreate,
     HomeFeaturedBatchCreate, HomeFeaturedBatchUpdate,
     UserAdminResponse, UserAdminCreate, UserAdminUpdate,
     UserDetailAdminResponse, UserActivityResponse, UserStatsResponse
@@ -496,6 +496,49 @@ def update_test(
     db.commit()
     db.refresh(db_obj)
     return db_obj
+
+@router.post("/test-group")
+def create_test_group(
+    item: TestGroupCreate,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin_user)
+):
+    db_obj = TestGroup(**item.dict())
+    db.add(db_obj)
+    db.commit()
+    db.refresh(db_obj)
+    return db_obj
+
+@router.put("/test-group/{id}")
+def update_test_group(
+    id: int,
+    item: TestGroupUpdate,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin_user)
+):
+    db_obj = db.query(TestGroup).filter(TestGroup.id == id).first()
+    if not db_obj:
+        raise HTTPException(status_code=404, detail="Test group not found")
+    
+    for field, value in item.dict(exclude_unset=True).items():
+        setattr(db_obj, field, value)
+        
+    db.commit()
+    db.refresh(db_obj)
+    return db_obj
+
+@router.delete("/test-group/{id}")
+def delete_test_group(
+    id: int,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin_user)
+):
+    db_obj = db.query(TestGroup).filter(TestGroup.id == id).first()
+    if not db_obj:
+        raise HTTPException(status_code=404, detail="Test group not found")
+    db.delete(db_obj)
+    db.commit()
+    return {"message": "Test group deleted"}
 
 # --- Featured Batch Management ---
 @router.get("/featured-batches", response_model=List[HomeFeaturedBatchResponse])

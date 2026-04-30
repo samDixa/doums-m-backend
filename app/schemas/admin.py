@@ -114,6 +114,18 @@ class TestUpdate(BaseModel):
     is_paid: Optional[bool] = None
     price: Optional[float] = None
 
+class TestGroupCreate(BaseModel):
+    title: str
+    parent_id: Optional[int] = None
+    sequence: int = 0
+    is_active: bool = True
+
+class TestGroupUpdate(BaseModel):
+    title: Optional[str] = None
+    parent_id: Optional[int] = None
+    sequence: Optional[int] = None
+    is_active: Optional[bool] = None
+
 class HomeFeaturedBatchCreate(BaseModel):
     course_id: int
     sequence: int = 0
