@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../models/mock_test_model.dart';
 import 'mock_test_list_screen.dart';
+import 'widgets/test_series_scaffold.dart';
 
 class MockSeriesDetailScreen extends StatelessWidget {
   final TestGroupModel seriesGroup;
@@ -11,30 +12,14 @@ class MockSeriesDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final categories = seriesGroup.children ?? [];
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF021B3A),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          seriesGroup.title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: false,
-      ),
+    return TestSeriesScaffold(
+      title: seriesGroup.title,
       body: categories.isEmpty
           ? const Center(child: Text('No categories available'))
           : Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
               child: ListView.separated(
+                physics: const BouncingScrollPhysics(),
                 itemCount: categories.length,
                 separatorBuilder: (context, index) => const SizedBox(height: 16),
                 itemBuilder: (context, index) {
@@ -57,26 +42,28 @@ class MockSeriesDetailScreen extends StatelessWidget {
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: Colors.black87, width: 1.2),
-          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.black, width: 1.0),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              height: 44,
+              width: 44,
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(4),
               ),
-              child: Image.asset(
-                'assets/icons/domus/subject_mcq.png', // Default icon
-                width: 48,
-                height: 48,
-                errorBuilder: (context, error, stackTrace) =>
-                    const Icon(Icons.logo_dev, size: 48, color: Colors.red),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: Image.asset(
+                  'assets/icons/domus/subject_mcq.png', // Default icon
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.book_outlined, size: 32, color: Colors.blueGrey),
+                ),
               ),
             ),
             const SizedBox(width: 16),
@@ -90,6 +77,7 @@ class MockSeriesDetailScreen extends StatelessWidget {
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
+                      letterSpacing: -0.2,
                     ),
                   ),
                   const SizedBox(height: 4),

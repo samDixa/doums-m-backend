@@ -1,7 +1,7 @@
 name: domus_mobile
 description: "EdTech learning platform mobile application."
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.1+2
 
 environment:
   sdk: ^3.5.0
@@ -28,6 +28,7 @@ dependencies:
   shimmer: ^3.0.0
   image_picker: ^1.1.2
   url_launcher: ^6.3.2
+  screen_protector: ^1.1.1
 
 dev_dependencies:
   flutter_test:

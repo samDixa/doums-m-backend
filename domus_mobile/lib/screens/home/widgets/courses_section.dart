@@ -10,6 +10,7 @@ import 'package:domus_mobile/core/constants/api_constants.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:domus_mobile/widgets/shimmer_loading.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class CourseCarousel extends ConsumerStatefulWidget {
   const CourseCarousel({super.key});
@@ -259,10 +260,13 @@ class _CourseCarouselState extends ConsumerState<CourseCarousel> {
                 height: 100,
                 color: Colors.white,
                 child: imageUrl != null
-                    ? Image.network(
-                        imageUrl,
+                    ? CachedNetworkImage(
+                        imageUrl: imageUrl,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const Icon(
+                        placeholder: (context, url) => const ShimmerSkeleton(
+                          shape: BoxShape.circle,
+                        ),
+                        errorWidget: (_, __, ___) => const Icon(
                           Icons.school_rounded,
                           size: 50,
                           color: Color(0xFF1B3B5F),

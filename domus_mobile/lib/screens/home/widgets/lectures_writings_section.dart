@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:domus_mobile/screens/courses/my_lectures_screen.dart';
 import 'package:domus_mobile/viewmodels/home_notifier.dart';
 import 'package:domus_mobile/widgets/shimmer_loading.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class LecturesWritingsSection extends ConsumerWidget {
   const LecturesWritingsSection({super.key});
@@ -81,10 +82,15 @@ class LecturesWritingsSection extends ConsumerWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                imageUrl,
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => const Icon(Icons.school, color: Colors.grey),
+                placeholder: (context, url) => const ShimmerSkeleton(
+                  height: 65,
+                  width: 100,
+                  borderRadius: 8,
+                ),
+                errorWidget: (context, url, error) => const Icon(Icons.school, color: Colors.grey),
               ),
             ),
           ),
@@ -191,10 +197,21 @@ class LecturesWritingsSection extends ConsumerWidget {
               shape: BoxShape.circle,
               border: Border.all(color: Colors.black, width: 1.2),
             ),
-            child: CircleAvatar(
-              radius: 24,
-              backgroundColor: Colors.grey[200],
-              backgroundImage: NetworkImage(imageUrl),
+            child: CachedNetworkImage(
+              imageUrl: imageUrl,
+              imageBuilder: (context, imageProvider) => CircleAvatar(
+                radius: 24,
+                backgroundImage: imageProvider,
+              ),
+              placeholder: (context, url) => const ShimmerSkeleton(
+                width: 48,
+                height: 48,
+                shape: BoxShape.circle,
+              ),
+              errorWidget: (context, url, error) => const CircleAvatar(
+                radius: 24,
+                child: Icon(Icons.person),
+              ),
             ),
           ),
           const SizedBox(width: 12),

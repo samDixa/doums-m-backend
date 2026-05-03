@@ -7,6 +7,7 @@ import 'package:domus_mobile/services/cart_service.dart';
 import 'package:domus_mobile/viewmodels/home_notifier.dart';
 import 'package:domus_mobile/core/constants/api_constants.dart';
 import 'package:domus_mobile/widgets/shimmer_loading.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class HomeHeader extends StatelessWidget {
   final VoidCallback onMenuPressed;
@@ -193,11 +194,19 @@ class _BannerCarouselState extends ConsumerState<BannerCarousel> {
 
           return Container(
             margin: const EdgeInsets.symmetric(horizontal: 4),
-            decoration: BoxDecoration(
+            child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              image: DecorationImage(
-                image: NetworkImage(imageUrl),
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
                 fit: BoxFit.cover,
+                placeholder: (context, url) => const ShimmerSkeleton(
+                  height: 160,
+                  borderRadius: 16,
+                ),
+                errorWidget: (context, url, error) => Container(
+                  color: Colors.grey[200],
+                  child: const Icon(Icons.error_outline, color: Colors.grey),
+                ),
               ),
             ),
           );

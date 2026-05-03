@@ -42,6 +42,9 @@ class MockTestModel {
   final int? positiveMarks;
   final int? durationSeconds;
   final String? testImage;
+  final String? lastAttemptDate;
+  final int? attemptsCount;
+  final bool isNew;
 
   final bool isPaid;
   final double price;
@@ -54,6 +57,9 @@ class MockTestModel {
     this.positiveMarks,
     this.durationSeconds,
     this.testImage,
+    this.lastAttemptDate,
+    this.attemptsCount,
+    this.isNew = false,
     this.isPaid = false,
     this.price = 0,
   });
@@ -67,6 +73,9 @@ class MockTestModel {
       positiveMarks: json['positive_marks'],
       durationSeconds: json['duration_seconds'],
       testImage: json['test_image'],
+      lastAttemptDate: json['last_attempt_date'],
+      attemptsCount: json['attempts_count'],
+      isNew: json['is_new'] ?? false,
       isPaid: json['is_paid'] ?? false,
       price: json['price']?.toDouble() ?? 0.0,
     );
