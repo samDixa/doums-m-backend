@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Numeric, Text, BigInteger, JSON
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql import func
 from app.core.database import Base
 
@@ -9,10 +9,13 @@ class TestGroup(Base):
     id = Column(Integer, primary_key=True, index=True)
     parent_id = Column(Integer, ForeignKey("test_groups.id"))
     title = Column(String, nullable=False)
+    description = Column(Text)
+    price = Column(Numeric(8, 2), default=0.0)
+    image = Column(Text)
     sequence = Column(Integer)
     is_active = Column(Boolean, default=True, nullable=False)
 
-    children = relationship("TestGroup", backref="parent", remote_side=[id])
+    children = relationship("TestGroup", backref=backref("parent", remote_side="TestGroup.id"), lazy="joined")
     tests = relationship("Test", back_populates="group")
 
 class Test(Base):
@@ -50,7 +53,7 @@ class Test(Base):
 class Question(Base):
     __tablename__ = "questions"
 
-    id = Column(BigInteger, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
     question_text = Column(Text, nullable=False)
     option_a = Column(Text, nullable=False)
     option_b = Column(Text, nullable=False)
@@ -72,7 +75,7 @@ class Question(Base):
 class TestQuestion(Base):
     __tablename__ = "test_questions"
 
-    id = Column(BigInteger, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
     test_id = Column(BigInteger, ForeignKey("tests.id", ondelete="CASCADE"), nullable=False)
     question_id = Column(BigInteger, ForeignKey("questions.id"), nullable=False)
     sequence = Column(Integer)
@@ -83,7 +86,7 @@ class TestQuestion(Base):
 class TestCategory(Base):
     __tablename__ = "test_categories"
 
-    id = Column(BigInteger, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
     code = Column(String, unique=True, nullable=False)
     label = Column(String, nullable=False)
 
@@ -96,7 +99,7 @@ class TestCategoryMap(Base):
 class TestAttempt(Base):
     __tablename__ = "test_attempts"
 
-    id = Column(BigInteger, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
     user_id = Column(BigInteger, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     test_id = Column(BigInteger, ForeignKey("tests.id"), nullable=False)
     attempt_number = Column(Integer, nullable=False)
@@ -115,7 +118,7 @@ class TestAttempt(Base):
 class UserAnswer(Base):
     __tablename__ = "user_answers"
 
-    id = Column(BigInteger, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
     test_attempt_id = Column(BigInteger, ForeignKey("test_attempts.id", ondelete="CASCADE"), nullable=False)
     question_id = Column(BigInteger, ForeignKey("questions.id"), nullable=False)
     selected_option_id = Column(BigInteger) # Deprecated, prefer selected_option
@@ -146,7 +149,7 @@ class UserGlobalPerformance(Base):
 class DailyMCQVote(Base):
     __tablename__ = "daily_mcq_votes"
 
-    id = Column(BigInteger, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
     user_id = Column(BigInteger, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     question_id = Column(BigInteger, ForeignKey("questions.id", ondelete="CASCADE"), nullable=False)
     selected_option = Column(String(1), nullable=False) # A, B, C, D

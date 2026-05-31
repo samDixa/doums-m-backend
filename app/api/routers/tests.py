@@ -26,6 +26,36 @@ def list_tests(
     tests = db.query(Test).filter(Test.is_active == True).offset(skip).limit(limit).all()
     return tests
 
+@router.get("/groups", response_model=List[TestGroupBase])
+def list_test_groups(
+    parent_id: Optional[int] = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    List test groups, optionally filtered by parent_id.
+    """
+    query = db.query(TestGroup).filter(TestGroup.is_active == True)
+    if parent_id:
+        query = query.filter(TestGroup.parent_id == parent_id)
+    else:
+        query = query.filter(TestGroup.parent_id == None)
+    return query.order_by(TestGroup.sequence).all()
+
+@router.get("/groups/{group_id}", response_model=TestGroupDetailResponse)
+def get_test_group(
+    group_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get test group details including nested children and tests.
+    """
+    group = db.query(TestGroup).filter(TestGroup.id == group_id, TestGroup.is_active == True).first()
+    if not group:
+        raise HTTPException(status_code=404, detail="Test group not found")
+    return group
+
 @router.get("/{test_id}", response_model=TestDetailResponse)
 def get_test(
     test_id: int,
@@ -182,32 +212,3 @@ def get_attempt_analysis(
         "time_taken": attempt.time_taken_seconds
     }
 
-@router.get("/groups", response_model=List[TestGroupBase])
-def list_test_groups(
-    parent_id: Optional[int] = None,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """
-    List test groups, optionally filtered by parent_id.
-    """
-    query = db.query(TestGroup).filter(TestGroup.is_active == True)
-    if parent_id:
-        query = query.filter(TestGroup.parent_id == parent_id)
-    else:
-        query = query.filter(TestGroup.parent_id == None)
-    return query.order_by(TestGroup.sequence).all()
-
-@router.get("/groups/{group_id}", response_model=TestGroupDetailResponse)
-def get_test_group(
-    group_id: int,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """
-    Get test group details including nested children and tests.
-    """
-    group = db.query(TestGroup).filter(TestGroup.id == group_id, TestGroup.is_active == True).first()
-    if not group:
-        raise HTTPException(status_code=404, detail="Test group not found")
-    return group

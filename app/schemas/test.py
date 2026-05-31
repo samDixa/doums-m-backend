@@ -66,6 +66,9 @@ class TestAttemptResponse(BaseModel):
 class TestGroupBase(BaseModel):
     id: int
     title: str
+    description: Optional[str] = None
+    price: float = 0.0
+    image: Optional[str] = None
     parent_id: Optional[int] = None
     sequence: Optional[int] = None
     is_active: bool

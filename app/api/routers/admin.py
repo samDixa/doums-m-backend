@@ -497,6 +497,54 @@ def update_test(
     db.refresh(db_obj)
     return db_obj
 
+@router.post("/test/{test_id}/question")
+def add_question_to_test(
+    test_id: int,
+    item: QuestionCreate,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin_user)
+):
+    # 1. Create the question
+    db_question = Question(**item.dict())
+    db.add(db_question)
+    db.commit()
+    db.refresh(db_question)
+
+    # 2. Link it to the test
+    # Get current max sequence
+    from app.models.test import TestQuestion
+    max_seq = db.query(func.max(TestQuestion.sequence)).filter(TestQuestion.test_id == test_id).scalar() or 0
+    
+    db_link = TestQuestion(
+        test_id=test_id,
+        question_id=db_question.id,
+        sequence=max_seq + 1
+    )
+    db.add(db_link)
+    db.commit()
+    
+    return db_question
+
+@router.delete("/test/{test_id}/question/{question_id}")
+def remove_question_from_test(
+    test_id: int,
+    question_id: int,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin_user)
+):
+    from app.models.test import TestQuestion
+    db_link = db.query(TestQuestion).filter(
+        TestQuestion.test_id == test_id,
+        TestQuestion.question_id == question_id
+    ).first()
+    
+    if not db_link:
+        raise HTTPException(status_code=404, detail="Question link not found in this test")
+        
+    db.delete(db_link)
+    db.commit()
+    return {"message": "Question removed from test"}
+
 @router.post("/test-group")
 def create_test_group(
     item: TestGroupCreate,
@@ -751,6 +799,78 @@ def delete_sub_category(sub_id: int, db: Session = Depends(get_db), current_admi
     if not db_obj: raise HTTPException(status_code=404, detail="Not found")
     db.delete(db_obj); db.commit()
     return {"message": "Deleted"}
+
+@router.post("/test/{test_id}/questions/bulk")
+def bulk_upload_questions(
+    test_id: int,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin_user)
+):
+    import pandas as pd
+    import io
+    from app.models.test import Question, TestQuestion
+    from sqlalchemy import func
+
+    try:
+        # Read the file
+        content = file.file.read()
+        file_ext = os.path.splitext(file.filename)[1].lower()
+        
+        if file_ext == '.csv':
+            df = pd.read_csv(io.BytesIO(content))
+        else:
+            df = pd.read_excel(io.BytesIO(content))
+        
+        # Replace NaN with None for clean database insertion
+        df = df.where(pd.notnull(df), None)
+
+        questions_created = 0
+        
+        # Get current max sequence
+        max_seq = db.query(func.max(TestQuestion.sequence)).filter(TestQuestion.test_id == test_id).scalar() or 0
+        
+        for index, row in df.iterrows():
+            # Convert row keys to lowercase for flexible matching
+            row_dict = {str(k).lower().strip(): v for k, v in row.items()}
+            
+            # Flexible mapping
+            q_text = row_dict.get('question_text') or row_dict.get('question') or row_dict.get('q_text')
+            c_opt = row_dict.get('correct_option') or row_dict.get('answer') or row_dict.get('correct')
+            
+            if pd.isna(q_text) or pd.isna(c_opt):
+                continue
+                
+            db_question = Question(
+                question_text=str(q_text),
+                option_a=str(row_dict.get('option_a') or row_dict.get('a') or ""),
+                option_b=str(row_dict.get('option_b') or row_dict.get('b') or ""),
+                option_c=str(row_dict.get('option_c') or row_dict.get('c') or ""),
+                option_d=str(row_dict.get('option_d') or row_dict.get('d') or ""),
+                correct_option=str(c_opt).upper().strip()[0],
+                description=str(row_dict.get('description') or row_dict.get('explanation') or "") if not pd.isna(row_dict.get('description') or row_dict.get('explanation')) else None,
+                is_active=True
+            )
+            db.add(db_question)
+            db.flush() # Get the ID
+            
+            db_link = TestQuestion(
+                test_id=test_id,
+                question_id=db_question.id,
+                sequence=max_seq + questions_created + 1
+            )
+            db.add(db_link)
+            questions_created += 1
+            
+        db.commit()
+        return {"message": f"Successfully uploaded {questions_created} questions"}
+    except Exception as e:
+        db.rollback()
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"BULK UPLOAD ERROR: {str(e)}")
+        print(error_details)
+        raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
 
 # --- Handlers for subcategory lectures, notes, tests ---
 @router.post("/sub_category_lecture", response_model=SubCategoryLectureResponse)

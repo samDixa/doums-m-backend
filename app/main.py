@@ -56,7 +56,7 @@ app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 # Set up CORS (add after mounting to ensure it wraps the static files app)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origin_regex=".*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -192,8 +192,3 @@ def register_user(
         "user": db_user
     }
 
-    return {
-        "is_new_user": False,
-        "access_token": token,
-        "user": user
-    }

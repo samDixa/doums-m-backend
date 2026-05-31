@@ -1,8 +1,8 @@
 # Git ignore for doums-backend
 
 # Exclude unwanted project parts
-# domus_mobile/
-# admin-panel/
+domus_mobile/
+admin-panel/
 
 # Python
 venv/
@@ -26,9 +26,22 @@ coverage.xml
 # OS
 .DS_Store
 
-# Data/Logs
+# Data/Logs/Databases
 uploads/
 *.log
+*.db
+*.db-journal
+*.sqlite
+tables_dump.sql
+
+# Scripts & Test Files
+scratch/
+seed_*.py
+scratch_*.py
+test_*.py
+add_mock_test_final.py
+sample_questions.xlsx
 
 # Misc
 *.docx
+

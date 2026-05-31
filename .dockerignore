@@ -1,0 +1,8 @@
+node_modules/
+.git/
+admin-panel/node_modules/
+admin-panel/dist/
+domus_mobile/
+venv/
+__pycache__/
+.env

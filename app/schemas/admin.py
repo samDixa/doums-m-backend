@@ -117,12 +117,18 @@ class TestUpdate(BaseModel):
 class TestGroupCreate(BaseModel):
     title: str
     parent_id: Optional[int] = None
+    description: Optional[str] = None
+    price: float = 0.0
+    image: Optional[str] = None
     sequence: int = 0
     is_active: bool = True
 
 class TestGroupUpdate(BaseModel):
     title: Optional[str] = None
     parent_id: Optional[int] = None
+    description: Optional[str] = None
+    price: Optional[float] = None
+    image: Optional[str] = None
     sequence: Optional[int] = None
     is_active: Optional[bool] = None
 
